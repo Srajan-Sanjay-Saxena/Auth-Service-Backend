@@ -2,7 +2,7 @@ import { dbResolver } from "./dbResolver";
 import mongoose, { Model, mongo, Schema } from "mongoose";
 import type { HydratedDocument } from "mongoose";
 import { env } from "../newProcess";
-import type { MethodBase, VirtualBase } from "../Helpers/model.helpers";
+import type { MethodBase, VirtualBase } from "../Types/model.types";
 
 const DB = dbResolver(env.DB);
 
@@ -38,21 +38,23 @@ class MongoDBConnection {
   }
 
   public getModel<
-    TDoc extends Document,
+    TSchema extends Schema,
     TMethods extends MethodBase,
     TVirtual extends VirtualBase
   >(
     modelName: string,
-    schema: Schema<HydratedDocument<TDoc, TMethods, TVirtual>>
-  ): Model<HydratedDocument<TDoc, TMethods, TVirtual>> {
+    schema: Schema<HydratedDocument<TSchema, TMethods, TVirtual>>
+  ): Model<HydratedDocument<TSchema, TMethods, TVirtual>> {
     if (mongoose.modelNames().includes(modelName)) {
-      return mongoose.model<HydratedDocument<TDoc, TMethods, TVirtual>>(
+      return mongoose.model<HydratedDocument<TSchema, TMethods, TVirtual>>(
         modelName
       );
     }
-    return mongoose.model<HydratedDocument<TDoc, TMethods, TVirtual>>(
+    return mongoose.model<HydratedDocument<TSchema, TMethods, TVirtual>>(
       modelName,
       schema
     );
   }
 }
+
+export const mongoInstance = MongoDBConnection.getInstance();
